@@ -4,8 +4,6 @@ use super::TlsConnector;
 use crate::transport::channel::BoxFuture;
 use crate::ConnectError;
 use http::Uri;
-#[cfg(feature = "tls")]
-use std::fmt;
 use std::task::{Context, Poll};
 
 use hyper::rt;
@@ -60,13 +58,11 @@ where
                 let io = connect.await?;
 
                 #[cfg(feature = "tls")]
-                if is_https {
-                    return if let Some(tls) = tls {
+                if let Some(tls) = tls {
+                    if is_https {
                         let io = tls.connect(TokioIo::new(io)).await?;
-                        Ok(io)
-                    } else {
-                        Err(HttpsUriWithoutTlsSupport(()).into())
-                    };
+                        return Ok(io);
+                    }
                 }
 
                 Ok::<_, crate::BoxError>(BoxedIo::new(io))
@@ -76,19 +72,3 @@ where
         })
     }
 }
-
-/// Error returned when trying to connect to an HTTPS endpoint without TLS enabled.
-#[cfg(feature = "tls")]
-#[derive(Debug)]
-pub(crate) struct HttpsUriWithoutTlsSupport(());
-
-#[cfg(feature = "tls")]
-impl fmt::Display for HttpsUriWithoutTlsSupport {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Connecting to HTTPS without TLS enabled")
-    }
-}
-
-// std::error::Error only requires a type to impl Debug and Display
-#[cfg(feature = "tls")]
-impl std::error::Error for HttpsUriWithoutTlsSupport {}
