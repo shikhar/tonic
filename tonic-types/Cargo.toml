@@ -7,7 +7,7 @@ categories = ["web-programming", "network-programming", "asynchronous"]
 description = """
 A collection of useful protobuf types that can be used with `tonic`.
 """
-documentation = "https://docs.rs/tonic-types/0.13.0"
+documentation = "https://docs.rs/tonic-types/0.12.3"
 edition = "2021"
 homepage = "https://github.com/hyperium/tonic"
 keywords = ["rpc", "grpc", "protobuf"]
@@ -15,13 +15,13 @@ license = "MIT"
 name = "tonic-types"
 readme = "README.md"
 repository = "https://github.com/hyperium/tonic"
-version = "0.13.0"
+version = "0.12.3"
 rust-version = { workspace = true }
 
 [dependencies]
 prost = "0.13"
 prost-types = "0.13"
-tonic = { version = "0.13.0", path = "../tonic", default-features = false }
+tonic = { version = "0.12", path = "../tonic", default-features = false }
 
 [lints]
 workspace = true
